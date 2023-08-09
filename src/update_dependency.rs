@@ -1,7 +1,8 @@
-use clap::{ArgMatches};
+use clap::ArgMatches;
 use serde_json::Value;
-use std::{fs, path::Path, thread};
+use std::error::Error;
 use std::process::{Command as Cmd, Stdio};
+use std::{fs, path::Path, thread};
 
 pub fn handle_update(sub: ArgMatches) {
     let default_dir = ".".to_string();
@@ -18,26 +19,21 @@ pub fn handle_update(sub: ArgMatches) {
         .filter(|e| e.path().is_dir())
         .map(|e| e.path())
         .filter(|e| {
+            let r: Result<bool, Box<dyn Error>> = (|| {
+                let path = e.join("package.json");
+                let json = fs::read_to_string(path)?;
+                let json = serde_json::from_str::<Value>(&json)?;
 
-            let path = e.join("package.json");
-            let json = fs::read_to_string(path);
-            let Ok(json) = json else {
-                return false;
-            };
-            let Ok(json) = serde_json::from_str::<Value>(&json) else {
-                return false;
-            };
-            let dep = json.get("dependencies");
-            let Some(dep) = dep else {
-                return false;
-            };
-            let Some(dep) = dep.get(package) else {
-                return false;
-            };
-            let Some(v) = dep.as_str() else {
-                return false;
-            };
-            !v.contains(version)
+                let v = json
+                    .get("dependencies")
+                    .ok_or("")?
+                    .get(package)
+                    .ok_or("")?
+                    .as_str()
+                    .ok_or("")?;
+                Ok(!v.contains(version))
+            })();
+            r.unwrap_or(false)
         })
         .for_each(|dir| {
             let dir = dir.clone();
@@ -52,13 +48,13 @@ pub fn handle_update(sub: ArgMatches) {
     println!("success");
 }
 pub fn handle_update_command<P, S>((dir, branch, package, version): (P, S, S, S))
-    where
-        P: AsRef<Path>,
-        S: AsRef<str> + std::fmt::Debug + std::fmt::Display,
+where
+    P: AsRef<Path>,
+    S: AsRef<str> + std::fmt::Debug + std::fmt::Display,
 {
     println!("{:?}", dir.as_ref());
     let mut is_new_branch = false;
-    let branch= branch.as_ref();
+    let branch = branch.as_ref();
     let package = package.as_ref();
     let version = version.as_ref();
     let output = Cmd::new("git")
