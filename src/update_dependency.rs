@@ -6,18 +6,42 @@ use std::{fs, path::Path, thread};
 
 pub fn handle_update(sub: ArgMatches) {
     let default_dir = ".".to_string();
+    let empty = "".to_string();
     let dir = sub.get_one::<String>("dir").unwrap_or(&default_dir);
     let branch = sub.get_one::<String>("branch").unwrap();
     let package = sub.get_one::<String>("package").unwrap();
     let version = sub.get_one::<String>("version").unwrap();
+    let include = sub
+        .get_one::<String>("include")
+        .unwrap_or(&empty)
+        .split(",")
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<&str>>();
+    let exclude = sub
+        .get_one::<String>("exclude")
+        .unwrap_or(&empty)
+        .split(",")
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<&str>>();
     let mut workers = vec![];
 
     fs::read_dir(dir)
         .unwrap()
         .into_iter()
-        .filter_map(|e| e.ok())
-        .filter(|e| e.path().is_dir())
-        .map(|e| e.path())
+        .filter_map(|d| d.ok())
+        .filter(|d| d.path().is_dir())
+        .map(|d| d.path())
+        .filter_map(|p| {
+            let name = p.file_name()?.to_str()?;
+            if exclude.contains(&name) {
+                return None;
+            }
+            if !include.is_empty() && !include.contains(&name) {
+                None
+            } else {
+                Some(p)
+            }
+        })
         .filter(|e| {
             let r: Result<bool, Box<dyn Error>> = (|| {
                 let path = e.join("package.json");
