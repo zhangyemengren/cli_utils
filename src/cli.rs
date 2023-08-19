@@ -9,12 +9,22 @@ pub fn cli() -> Command {
         .subcommand(
             Command::new("update")
                 .about("update projects common dependencies")
-                .arg(arg!(--dir[DIR] "dir name"))
-                .arg(arg!(--package <PACKAGE> "dependencies package name"))
-                .arg(arg!(--version <VERSION> "dependencies package version"))
-                .arg(arg!(--include [INCLUDE] "include files name"))
-                .arg(arg!(--exclude [EXCLUDE] "exclude files name"))
-                .arg(arg!(--branch <BRANCH> "branch name")),
+                .arg(arg!(-d --dir[DIR] "dir name"))
+                .arg(arg!(-p --package <PACKAGE> "dependencies package name"))
+                .arg(arg!(-v --version <VERSION> "dependencies package version"))
+                .arg(arg!(-i --include [INCLUDE] "include files name (split by ,)"))
+                .arg(arg!(-e --exclude [EXCLUDE] "exclude files name (split by ,)"))
+                .arg(arg!(-b --branch <BRANCH> "branch name")),
         )
-        .subcommand(Command::new("b").about("Prints 'b'"))
+        .subcommand(
+            Command::new("merge")
+                .about("merge branch")
+                .arg(arg!(-d --dir[DIR] "dir name"))
+                .arg(arg!(-i --include [INCLUDE] "include files name (split by ,)"))
+                .arg(arg!(-e --exclude [EXCLUDE] "exclude files name (split by ,)"))
+                .arg(arg!(-b --branch <BRANCH> "base branch name"))
+                .arg(arg!(-t --target <MAIN> "merge branch name"))
+                .arg(arg!(-m --mode <MODE> "merge or rebase( default merge)")),
+
+        )
 }
