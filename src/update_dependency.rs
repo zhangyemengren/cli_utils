@@ -76,7 +76,7 @@ where
     P: AsRef<Path>,
     S: AsRef<str> + std::fmt::Debug + std::fmt::Display,
 {
-    println!("{:?}", dir.as_ref());
+    // println!("{:?}", dir.as_ref());
     let mut is_new_branch = false;
     let branch = branch.as_ref();
     let package = package.as_ref();
@@ -90,7 +90,7 @@ where
         .unwrap();
     let str = String::from_utf8(output.stdout).unwrap();
     if !str.is_empty() {
-        println!("\x1b[31m {} {str}\x1b[0m", "work space not clean");
+        println!("\x1b[31m {:?} {} {str}\x1b[0m", dir.as_ref(), "work space not clean");
         return;
     }
     let mut child = Cmd::new("git")
