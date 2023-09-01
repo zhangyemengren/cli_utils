@@ -24,7 +24,8 @@ pub fn cli() -> Command {
                 .arg(arg!(-e --exclude [EXCLUDE] "exclude files name (split by ,)"))
                 .arg(arg!(-b --branch <BRANCH> "base branch name"))
                 .arg(arg!(-t --target [TARGET] "merge branch name ( default master)"))
-                .arg(arg!(-m --mode [MODE] "merge or rebase( default merge)")),
+                .arg(arg!(-c --cherrypick ... "cherry-pick mode"))
+                .arg(arg!(-r --rebase ... "rebase mode")),
 
         )
 }

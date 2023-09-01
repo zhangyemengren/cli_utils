@@ -25,9 +25,9 @@ cargo run -- merge --dir /Users/zhangchi/projects --branch qwer4 --target qwer3 
 - [x] 传入包name及版本
 - [x] 增加简写版本
 - [x] 尝试merge
-- [ ] 处理merge失败(发现冲突时会到stdout而不是stderr 需要字符串去识别而不是仅通过stderr)
-- [ ] rebase模式
-- [ ] cherry-pick模式
+- [x] 处理merge失败(发现冲突时会到stdout而不是stderr 需要字符串去识别而不是仅通过stderr)
+- [x] rebase模式
+- [x] cherry-pick模式
 
 # feature
 - [x] 更新包依赖
