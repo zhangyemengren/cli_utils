@@ -32,5 +32,4 @@ cargo run -- merge --dir /Users/zhangchi/projects --branch qwer4 --target qwer3 
 # feature
 - [x] 更新包依赖
 - [x] 检查git working tree clean
-- [ ] 自动合并master
-- [ ] 文案导入
+- [x] 自动合并master
